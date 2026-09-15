@@ -1,0 +1,38 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "settings"
+    label: "بيانات الموقع"
+    files:
+      - file: "content/settings.json"
+        label: "الإعدادات العامة"
+        name: "settings"
+        fields:
+          - { label: "اسم الشركة", name: "companyName", widget: "string" }
+          - { label: "الشعار النصي (تحت الاسم)", name: "tagline", widget: "string" }
+          - { label: "شعار الشركة (صورة)", name: "logo", widget: "image", required: false }
+          - { label: "عنوان الصفحة الرئيسية", name: "heroTitle", widget: "string" }
+          - { label: "نص الصفحة الرئيسية", name: "heroText", widget: "text" }
+          - { label: "عنوان قسم من نحن", name: "aboutTitle", widget: "string" }
+          - { label: "نص قسم من نحن", name: "aboutBody", widget: "text" }
+          - label: "الخدمات"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "العنوان", name: "title", widget: "string" }
+              - { label: "الوصف", name: "description", widget: "text" }
+          - label: "أعمالنا"
+            name: "work"
+            widget: "list"
+            fields:
+              - { label: "العنوان", name: "title", widget: "string" }
+              - { label: "الوصف", name: "description", widget: "text" }
+              - { label: "صورة (اختياري)", name: "image", widget: "image", required: false }
+          - { label: "رقم الهاتف", name: "phone", widget: "string" }
+          - { label: "البريد الإلكتروني", name: "email", widget: "string" }
+          - { label: "العنوان / الموقع", name: "address", widget: "string" }
