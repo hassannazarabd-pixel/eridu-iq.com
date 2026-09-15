@@ -56,6 +56,15 @@
   .apex-glow{animation:pulse 2.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.55;} 50%{opacity:1;}}
 
+  .stats-strip{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:-34px; position:relative; z-index:5;
+  }
+  .stat-cell{background:var(--paper); padding:24px 16px; text-align:center;}
+  .stat-cell .num{font-family:'Cairo'; font-size:26px; font-weight:800; color:var(--azure);}
+  .stat-cell .label{font-size:12.5px; color:var(--text-soft); margin-top:4px;}
+  @media(max-width:920px){ .stats-strip{grid-template-columns:1fr 1fr;} }
+
   .about{background:var(--paper);}
   .about-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start;}
   .about h2{font-size:32px; font-weight:800; max-width:420px;}
@@ -90,6 +99,27 @@
   .step-card h3{font-size:17.5px; font-weight:700; margin-bottom:8px;}
   .step-card p{font-size:14.5px; color:var(--text-soft);}
 
+  .products{background:var(--paper);}
+  .product-filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px;}
+  .filter-chip{
+    border:1px solid var(--line); background:var(--paper); color:var(--ink); padding:9px 20px; border-radius:999px;
+    font-size:14px; font-weight:600; cursor:pointer; transition:all .2s ease;
+  }
+  .filter-chip.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .products-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .product-tile{
+    background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:22px;
+    display:flex; align-items:center; gap:14px; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .product-tile:hover{transform:translateY(-2px); box-shadow:0 12px 24px -12px rgba(14,27,46,0.18);}
+  .product-tile .tile-icon{
+    width:44px; height:44px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    color:#fff;
+  }
+  .product-tile .tile-icon svg{width:22px; height:22px;}
+  .product-tile .tile-text .cat{font-size:11.5px; color:var(--clay-dark); font-weight:700; margin-bottom:2px;}
+  .product-tile .tile-text .name{font-size:14.5px; font-weight:700;}
+
   .why{background:var(--paper);}
   .why-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:32px;}
   .why-card h3{font-size:19px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:10px;}
@@ -119,9 +149,13 @@
   .info-line svg{width:20px; height:20px; color:var(--azure); flex-shrink:0;}
   form{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:32px;}
   .field{margin-bottom:18px;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   .field label{display:block; font-size:14px; font-weight:600; margin-bottom:8px;}
-  .field input, .field textarea{width:100%; border:1px solid var(--line); border-radius:8px; padding:12px 14px; font-family:inherit; font-size:14.5px; background:#fff;}
+  .field input, .field textarea, .field select{width:100%; border:1px solid var(--line); border-radius:8px; padding:12px 14px; font-family:inherit; font-size:14.5px; background:#fff;}
   .field textarea{resize:vertical; min-height:100px;}
+  .map-embed{margin-top:26px; border-radius:12px; overflow:hidden; border:1px solid var(--line); height:220px;}
+  .map-embed iframe{width:100%; height:100%; border:0;}
+  @media(max-width:920px){ .field-row{grid-template-columns:1fr;} }
   .submit-btn{width:100%; background:var(--ink); color:var(--paper); border:none; padding:14px; border-radius:8px; font-weight:700; font-size:15px; cursor:pointer;}
   .form-note{font-size:12.5px; color:var(--text-soft); margin-top:12px; text-align:center;}
 
@@ -165,6 +199,7 @@
     .steps{grid-template-columns:1fr 1fr;}
     .why-grid{grid-template-columns:1fr;}
     .work-grid{grid-template-columns:1fr;}
+    .products-grid{grid-template-columns:1fr;}
     .service-row-head{grid-template-columns:44px 1fr 20px;}
     .service-row-head p{grid-column:2/3;}
     .service-details-inner{padding-right:44px;}
@@ -220,6 +255,8 @@
   </div>
 </section>
 
+<div class="stats-strip wrap" id="statsStrip"></div>
+
 <section class="about reveal" id="about">
   <div class="wrap about-grid">
     <div>
@@ -240,6 +277,17 @@
       <p>منظومة متكاملة تغطي مشروعك من الفكرة إلى التنفيذ الميداني. اضغط على أي خدمة لعرض تفاصيلها.</p>
     </div>
     <div id="servicesList"></div>
+  </div>
+</section>
+
+<section class="products reveal" id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>منتجاتنا</h2>
+      <p>مجموعة من أكثر المنتجات طلباً، مصنّفة حسب النوع.</p>
+    </div>
+    <div class="product-filters" id="productFilters"></div>
+    <div class="products-grid" id="productsGrid"></div>
   </div>
 </section>
 
@@ -287,10 +335,24 @@
       <div class="info-line"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.6-7-11a7 7 0 0114 0c0 6.4-7 11-7 11z" stroke="currentColor" stroke-width="2"/></svg><span id="contactAddress">البصرة، العراق</span></div>
       <div class="info-line"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6l8 6 8-6M4 6h16v12H4V6z" stroke="currentColor" stroke-width="2"/></svg><span id="contactEmail">info@eridu-gate.example</span></div>
       <div class="info-line"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-3 2a12 12 0 006 6l2-3 5 2v4c0 1-1 2-2 2A17 17 0 015 6c0-1 1-2 2-2z" stroke="currentColor" stroke-width="2"/></svg><span id="contactPhone">07XX XXX XXXX</span></div>
+      <div class="map-embed" id="mapEmbed"></div>
     </div>
     <form onsubmit="event.preventDefault(); alert('شكراً! هذا النموذج شكل فقط حالياً، يحتاج ربط برقم واتساب أو إيميل حقيقي.');">
-      <div class="field"><label>الاسم</label><input type="text" placeholder="اسمك الكامل" required></div>
+      <div class="field-row">
+        <div class="field"><label>الاسم الأول</label><input type="text" placeholder="اسمك الأول" required></div>
+        <div class="field"><label>اسم العائلة</label><input type="text" placeholder="اللقب" required></div>
+      </div>
       <div class="field"><label>رقم الهاتف</label><input type="tel" placeholder="07XX XXX XXXX" required></div>
+      <div class="field"><label>البريد الإلكتروني</label><input type="email" placeholder="example@email.com"></div>
+      <div class="field">
+        <label>القسم المراد التواصل معه</label>
+        <select>
+          <option>المبيعات</option>
+          <option>التصميم والطباعة</option>
+          <option>الدعم الفني</option>
+          <option>الإدارة</option>
+        </select>
+      </div>
       <div class="field"><label>تفاصيل المشروع</label><textarea placeholder="حدثنا عن مشروعك..." required></textarea></div>
       <button class="submit-btn" type="submit">إرسال الطلب</button>
       <p class="form-note">هذا النموذج شكل واجهة حالياً، يحتاج ربط برقم واتساب أو بريد فعّال قبل النشر.</p>
@@ -335,7 +397,15 @@ const workGradients = [
 ];
 const chevronSvg = '<svg class="service-caret" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2"/></svg>';
 
+const categoryStyle = {
+  'فلكس': { color:'#2C6FE0', icon:'<svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M4 15l4-4 3 3 5-6 4 5" stroke="currentColor" stroke-width="2"/></svg>' },
+  'هدايا': { color:'#C9A468', icon:'<svg viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="1" stroke="currentColor" stroke-width="2"/><path d="M4 9h16M12 9v11M12 9c-2-4-6-4-6-1s4 1 6 1zm0 0c2-4 6-4 6-1s-4 1-6 1z" stroke="currentColor" stroke-width="2"/></svg>' },
+  'ورقيات': { color:'#14275A', icon:'<svg viewBox="0 0 24 24" fill="none"><path d="M6 3h9l3 3v15H6z" stroke="currentColor" stroke-width="2"/><path d="M9 11h6M9 15h6" stroke="currentColor" stroke-width="2"/></svg>' },
+  'تغليف': { color:'#A9803F', icon:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 8l8-4 8 4-8 4-8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 8v8l8 4 8-4V8M12 12v8" stroke="currentColor" stroke-width="2"/></svg>' }
+};
+
 let siteData = null;
+let activeCategory = 'الكل';
 
 fetch('content/settings.json').then(r => r.json()).then(data => {
   siteData = data;
@@ -391,8 +461,58 @@ fetch('content/settings.json').then(r => r.json()).then(data => {
   document.getElementById('contactEmail').textContent = data.email || '';
   document.getElementById('contactAddress').textContent = data.address || '';
 
+  renderStats(data);
+  renderProducts(data.products || []);
+  renderMap(data.mapQuery || data.address || 'البصرة، العراق');
+
   setupRevealObserver();
 }).catch(err => console.error('تعذر تحميل content/settings.json', err));
+
+function renderStats(data) {
+  const strip = document.getElementById('statsStrip');
+  const cells = [
+    { num: (data.services || []).length, label: 'خدمات متكاملة' },
+    { num: (data.work || []).length + '+', label: 'مجالات أعمال' },
+    { num: (data.products || []).length + '+', label: 'منتج ضمن كتالوجنا' },
+    { num: '4', label: 'خطوات عمل واضحة' }
+  ];
+  strip.innerHTML = cells.map(c => (
+    '<div class="stat-cell"><div class="num">' + c.num + '</div><div class="label">' + c.label + '</div></div>'
+  )).join('');
+}
+
+function renderProducts(products) {
+  const categories = ['الكل', 'فلكس', 'هدايا', 'ورقيات', 'تغليف'];
+  const filtersEl = document.getElementById('productFilters');
+  filtersEl.innerHTML = categories.map(c =>
+    '<button class="filter-chip' + (c === activeCategory ? ' active' : '') + '" data-cat="' + c + '" onclick="filterProducts(\'' + c + '\')">' + c + '</button>'
+  ).join('');
+
+  const gridEl = document.getElementById('productsGrid');
+  gridEl.innerHTML = products.map(p => {
+    const style = categoryStyle[p.category] || categoryStyle['فلكس'];
+    return '<div class="product-tile" data-cat="' + p.category + '">' +
+      '<div class="tile-icon" style="background:' + style.color + '">' + style.icon + '</div>' +
+      '<div class="tile-text"><div class="cat">' + p.category + '</div><div class="name">' + p.name + '</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterProducts(cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === cat);
+  });
+  document.querySelectorAll('.product-tile').forEach(tile => {
+    tile.style.display = (cat === 'الكل' || tile.getAttribute('data-cat') === cat) ? 'flex' : 'none';
+  });
+}
+
+function renderMap(query) {
+  const mapEl = document.getElementById('mapEmbed');
+  const src = 'https://www.google.com/maps?q=' + encodeURIComponent(query) + '&output=embed';
+  mapEl.innerHTML = '<iframe src="' + src + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="خريطة الموقع"></iframe>';
+}
 
 function toggleService(i) {
   const row = document.querySelectorAll('.service-row')[i];

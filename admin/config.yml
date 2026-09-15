@@ -41,6 +41,16 @@ collections:
                 name: "details"
                 widget: "list"
                 field: { label: "نقطة", name: "point", widget: "string" }
+          - label: "منتجاتنا (معرض بفلاتر)"
+            name: "products"
+            widget: "list"
+            fields:
+              - { label: "اسم المنتج", name: "name", widget: "string" }
+              - label: "التصنيف"
+                name: "category"
+                widget: "select"
+                options: ["فلكس", "هدايا", "ورقيات", "تغليف"]
+          - { label: "منطقة الخريطة (اسم مدينة أو عنوان)", name: "mapQuery", widget: "string" }
           - { label: "رقم الهاتف", name: "phone", widget: "string" }
           - { label: "البريد الإلكتروني", name: "email", widget: "string" }
           - { label: "العنوان / الموقع", name: "address", widget: "string" }
