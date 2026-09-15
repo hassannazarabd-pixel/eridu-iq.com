@@ -20,8 +20,12 @@
   img{max-width:100%; display:block;}
   a{color:inherit; text-decoration:none;}
   ul{list-style:none;}
+  button{font-family:inherit;}
   .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
   section{padding:96px 0;}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in-view{opacity:1; transform:translateY(0);}
 
   header{position:sticky; top:0; z-index:50; background:rgba(243,238,226,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
   .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1180px; margin:0 auto;}
@@ -43,7 +47,7 @@
   .hero-text h1{font-size:46px; font-weight:800; line-height:1.35; letter-spacing:-.5px; max-width:640px;}
   .hero-text p{margin-top:22px; font-size:17px; color:rgba(251,249,244,0.78); max-width:520px;}
   .hero-actions{display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;}
-  .btn-primary{background:var(--azure); color:#fff; padding:14px 26px; border-radius:8px; font-weight:600; font-size:15px; box-shadow:0 10px 24px -8px rgba(44,111,224,0.55);}
+  .btn-primary{background:var(--azure); color:#fff; padding:14px 26px; border-radius:8px; font-weight:600; font-size:15px; box-shadow:0 10px 24px -8px rgba(44,111,224,0.55); border:none; cursor:pointer;}
   .btn-ghost{border:1px solid rgba(251,249,244,0.35); color:var(--paper); padding:14px 26px; border-radius:8px; font-weight:600; font-size:15px;}
   .hero-art{position:relative;}
   .ziggurat-step{fill:none; stroke-width:3; stroke-dasharray:1000; stroke-dashoffset:1000; animation:draw 1.6s ease forwards;}
@@ -62,11 +66,22 @@
   .section-head{max-width:560px; margin-bottom:56px;}
   .section-head h2{font-size:32px; font-weight:800; color:var(--paper);}
   .section-head p{margin-top:14px; color:rgba(251,249,244,0.68); font-size:16px;}
-  .service-row{display:grid; grid-template-columns:64px 1fr 1.3fr; gap:28px; align-items:flex-start; padding:34px 0; border-top:1px solid rgba(251,249,244,0.14);}
+  .service-row{border-top:1px solid rgba(251,249,244,0.14); padding:6px 0;}
   .service-row:last-child{border-bottom:1px solid rgba(251,249,244,0.14);}
+  .service-row-head{
+    display:grid; grid-template-columns:64px 1fr 1.3fr 24px; gap:28px; align-items:flex-start;
+    padding:28px 0; cursor:pointer; background:none; border:none; width:100%; text-align:right; color:inherit;
+  }
   .service-icon{width:52px; height:52px; color:var(--clay);}
   .service-row h3{font-size:21px; font-weight:800;}
-  .service-row p{color:rgba(251,249,244,0.68); font-size:15.5px; max-width:560px;}
+  .service-row-head p{color:rgba(251,249,244,0.68); font-size:15.5px; max-width:560px;}
+  .service-caret{width:22px; height:22px; color:var(--clay); transition:transform .3s ease; margin-top:6px; justify-self:start;}
+  .service-row.open .service-caret{transform:rotate(180deg);}
+  .service-details{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .service-details-inner{padding:0 0 28px 96px;}
+  .service-details-inner ul{display:flex; flex-direction:column; gap:10px;}
+  .service-details-inner li{position:relative; padding-right:20px; font-size:14.5px; color:rgba(251,249,244,0.75);}
+  .service-details-inner li:before{content:"–"; position:absolute; right:0; color:var(--clay);}
 
   .process{background:var(--parchment);}
   .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:26px;}
@@ -84,11 +99,17 @@
   .work{background:var(--indigo); color:var(--paper);}
   .work .section-head p{color:rgba(251,249,244,0.68);}
   .work-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
-  .work-card{background:rgba(251,249,244,0.05); border:1px solid rgba(251,249,244,0.14); border-radius:12px; padding:30px; overflow:hidden;}
+  .work-card{
+    background:rgba(251,249,244,0.05); border:1px solid rgba(251,249,244,0.14); border-radius:12px;
+    padding:30px; overflow:hidden; cursor:pointer; transition:transform .25s ease, border-color .25s ease;
+  }
+  .work-card:hover{transform:translateY(-4px); border-color:rgba(108,156,247,0.5);}
   .work-card .art{height:150px; margin-bottom:20px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#2C6FE0,#14275A); overflow:hidden;}
   .work-card .art img{width:100%; height:100%; object-fit:cover;}
   .work-card h3{font-size:18px; font-weight:800; margin-bottom:8px;}
   .work-card p{font-size:14.5px; color:rgba(251,249,244,0.6);}
+  .work-card .hint{display:flex; align-items:center; gap:6px; margin-top:14px; font-size:13px; color:var(--clay); font-weight:600;}
+  .work-card .hint svg{width:16px; height:16px;}
 
   .contact{background:var(--parchment);}
   .contact-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px;}
@@ -109,6 +130,31 @@
   .footer-brand{display:flex; align-items:center; gap:10px; color:var(--paper); font-weight:700;}
   .footer-brand img{height:28px; border-radius:3px;}
 
+  /* Modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(14,27,46,0.72); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--paper); border-radius:16px; max-width:560px; width:100%; max-height:85vh; overflow-y:auto;
+    padding:0; position:relative; animation:modalIn .25s ease;
+  }
+  @keyframes modalIn{ from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+  .modal-art{height:170px; border-radius:16px 16px 0 0;}
+  .modal-close{
+    position:absolute; top:16px; left:16px; width:34px; height:34px; border-radius:50%;
+    background:rgba(14,27,46,0.08); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .modal-close svg{width:18px; height:18px; color:var(--ink);}
+  .modal-body{padding:30px 32px 34px;}
+  .modal-body h3{font-size:22px; font-weight:800; margin-bottom:12px;}
+  .modal-body p.desc{color:var(--text-soft); font-size:15.5px; margin-bottom:20px;}
+  .modal-body .details-label{font-size:13px; font-weight:700; color:var(--azure); margin-bottom:12px;}
+  .modal-body ul{display:flex; flex-direction:column; gap:10px;}
+  .modal-body li{position:relative; padding-right:20px; font-size:14.5px; color:var(--ink);}
+  .modal-body li:before{content:"–"; position:absolute; right:0; color:var(--clay-dark);}
+
   @media(max-width:920px){
     .nav-links, .nav-cta{display:none;}
     .burger{display:flex;}
@@ -119,8 +165,9 @@
     .steps{grid-template-columns:1fr 1fr;}
     .why-grid{grid-template-columns:1fr;}
     .work-grid{grid-template-columns:1fr;}
-    .service-row{grid-template-columns:44px 1fr; }
-    .service-row p{grid-column:2/3;}
+    .service-row-head{grid-template-columns:44px 1fr 20px;}
+    .service-row-head p{grid-column:2/3;}
+    .service-details-inner{padding-right:44px;}
   }
 </style>
 </head>
@@ -173,7 +220,7 @@
   </div>
 </section>
 
-<section class="about" id="about">
+<section class="about reveal" id="about">
   <div class="wrap about-grid">
     <div>
       <svg class="about-mark" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -186,17 +233,17 @@
   </div>
 </section>
 
-<section class="services" id="services">
+<section class="services reveal" id="services">
   <div class="wrap">
     <div class="section-head">
       <h2>خدماتنا</h2>
-      <p>منظومة متكاملة تغطي مشروعك من الفكرة إلى التنفيذ الميداني، بدل التنقل بين عدة مقاولين.</p>
+      <p>منظومة متكاملة تغطي مشروعك من الفكرة إلى التنفيذ الميداني. اضغط على أي خدمة لعرض تفاصيلها.</p>
     </div>
     <div id="servicesList"></div>
   </div>
 </section>
 
-<section class="process" id="process">
+<section class="process reveal" id="process">
   <div class="wrap">
     <div class="section-head">
       <h2>طريقة عملنا</h2>
@@ -211,7 +258,7 @@
   </div>
 </section>
 
-<section class="why">
+<section class="why reveal">
   <div class="wrap">
     <div class="section-head"><h2>ليش تختار أريدو</h2></div>
     <div class="why-grid">
@@ -222,17 +269,17 @@
   </div>
 </section>
 
-<section class="work" id="work">
+<section class="work reveal" id="work">
   <div class="wrap">
     <div class="section-head">
       <h2>مجالات أعمالنا</h2>
-      <p>نماذج من نوعية المشاريع التي ننفذها لعملائنا في مختلف القطاعات.</p>
+      <p>نماذج من نوعية المشاريع التي ننفذها لعملائنا. اضغط على أي بطاقة لعرض تفاصيل أكثر.</p>
     </div>
     <div class="work-grid" id="workList"></div>
   </div>
 </section>
 
-<section class="contact" id="contact">
+<section class="contact reveal" id="contact">
   <div class="wrap contact-grid">
     <div class="contact-info">
       <h2>تواصل معنا</h2>
@@ -258,6 +305,21 @@
   </div>
 </footer>
 
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2"/></svg></button>
+    <div class="modal-art" id="modalArt"></div>
+    <div class="modal-body">
+      <h3 id="modalTitle"></h3>
+      <p class="desc" id="modalDesc"></p>
+      <div id="modalDetailsWrap">
+        <div class="details-label">ماذا يشمل هذا العمل</div>
+        <ul id="modalDetails"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const serviceIcons = [
   '<svg class="service-icon" viewBox="0 0 48 48" fill="none"><path d="M14 10h20v10H14z" stroke="currentColor" stroke-width="2.5"/><path d="M8 20h32v12H8z" stroke="currentColor" stroke-width="2.5"/><path d="M14 32h20v6H14z" stroke="currentColor" stroke-width="2.5"/></svg>',
@@ -271,8 +333,12 @@ const workGradients = [
   'linear-gradient(135deg,#14275A,#0E1B2E)',
   'linear-gradient(135deg,#2C6FE0,#6C9CF7)'
 ];
+const chevronSvg = '<svg class="service-caret" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2"/></svg>';
+
+let siteData = null;
 
 fetch('content/settings.json').then(r => r.json()).then(data => {
+  siteData = data;
   document.title = (data.companyName || 'بوابة أريدو') + ' | ' + (data.tagline || '');
   document.querySelectorAll('#brandTextNav').forEach(el => { el.childNodes[0].textContent = data.companyName || ''; });
   document.getElementById('taglineNav').textContent = data.tagline || '';
@@ -293,7 +359,18 @@ fetch('content/settings.json').then(r => r.json()).then(data => {
   (data.services || []).forEach((s, i) => {
     const row = document.createElement('div');
     row.className = 'service-row';
-    row.innerHTML = serviceIcons[i % serviceIcons.length] + '<h3>' + s.title + '</h3><p>' + s.description + '</p>';
+    const hasDetails = s.details && s.details.length;
+    row.innerHTML =
+      '<button class="service-row-head" onclick="toggleService(' + i + ')">' +
+        serviceIcons[i % serviceIcons.length] +
+        '<h3>' + s.title + '</h3><p>' + s.description + '</p>' +
+        (hasDetails ? chevronSvg : '<span></span>') +
+      '</button>' +
+      (hasDetails ? (
+        '<div class="service-details" id="serviceDetails' + i + '"><div class="service-details-inner"><ul>' +
+          s.details.map(d => '<li>' + d + '</li>').join('') +
+        '</ul></div></div>'
+      ) : '');
     servicesList.appendChild(row);
   });
 
@@ -301,15 +378,77 @@ fetch('content/settings.json').then(r => r.json()).then(data => {
   (data.work || []).forEach((w, i) => {
     const card = document.createElement('div');
     card.className = 'work-card';
+    card.onclick = () => openModal(i);
     const artInner = w.image ? '<img src="' + w.image + '" alt="' + w.title + '">' : '';
-    card.innerHTML = '<div class="art" style="background:' + workGradients[i % workGradients.length] + '">' + artInner + '</div><h3>' + w.title + '</h3><p>' + w.description + '</p>';
+    card.innerHTML =
+      '<div class="art" style="background:' + workGradients[i % workGradients.length] + '">' + artInner + '</div>' +
+      '<h3>' + w.title + '</h3><p>' + w.description + '</p>' +
+      '<div class="hint"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.2"/></svg>عرض التفاصيل</div>';
     workList.appendChild(card);
   });
 
   document.getElementById('contactPhone').textContent = data.phone || '';
   document.getElementById('contactEmail').textContent = data.email || '';
   document.getElementById('contactAddress').textContent = data.address || '';
+
+  setupRevealObserver();
 }).catch(err => console.error('تعذر تحميل content/settings.json', err));
+
+function toggleService(i) {
+  const row = document.querySelectorAll('.service-row')[i];
+  const details = document.getElementById('serviceDetails' + i);
+  if (!details) return;
+  const isOpen = row.classList.contains('open');
+  document.querySelectorAll('.service-row.open').forEach(r => {
+    r.classList.remove('open');
+    const idx = Array.from(document.querySelectorAll('.service-row')).indexOf(r);
+    const d = document.getElementById('serviceDetails' + idx);
+    if (d) d.style.maxHeight = null;
+  });
+  if (!isOpen) {
+    row.classList.add('open');
+    details.style.maxHeight = details.scrollHeight + 'px';
+  }
+}
+
+function openModal(i) {
+  const w = siteData.work[i];
+  document.getElementById('modalTitle').textContent = w.title;
+  document.getElementById('modalDesc').textContent = w.description;
+  const artEl = document.getElementById('modalArt');
+  const grad = workGradients[i % workGradients.length];
+  artEl.style.background = grad;
+  artEl.innerHTML = w.image ? '<img src="' + w.image + '" style="width:100%;height:100%;object-fit:cover;border-radius:16px 16px 0 0;">' : '';
+  const detailsWrap = document.getElementById('modalDetailsWrap');
+  const detailsList = document.getElementById('modalDetails');
+  if (w.details && w.details.length) {
+    detailsWrap.style.display = 'block';
+    detailsList.innerHTML = w.details.map(d => '<li>' + d + '</li>').join('');
+  } else {
+    detailsWrap.style.display = 'none';
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+function setupRevealObserver() {
+  const items = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  items.forEach(el => io.observe(el));
+}
 </script>
 
 </body>

@@ -26,6 +26,10 @@ collections:
             fields:
               - { label: "العنوان", name: "title", widget: "string" }
               - { label: "الوصف", name: "description", widget: "text" }
+              - label: "تفاصيل إضافية (تظهر عند الضغط)"
+                name: "details"
+                widget: "list"
+                field: { label: "نقطة", name: "point", widget: "string" }
           - label: "أعمالنا"
             name: "work"
             widget: "list"
@@ -33,6 +37,10 @@ collections:
               - { label: "العنوان", name: "title", widget: "string" }
               - { label: "الوصف", name: "description", widget: "text" }
               - { label: "صورة (اختياري)", name: "image", widget: "image", required: false }
+              - label: "تفاصيل إضافية (تظهر عند الضغط)"
+                name: "details"
+                widget: "list"
+                field: { label: "نقطة", name: "point", widget: "string" }
           - { label: "رقم الهاتف", name: "phone", widget: "string" }
           - { label: "البريد الإلكتروني", name: "email", widget: "string" }
           - { label: "العنوان / الموقع", name: "address", widget: "string" }
